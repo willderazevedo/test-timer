@@ -55,6 +55,8 @@ public class Timer extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Tempo esgotado", "Timer", JOptionPane.INFORMATION_MESSAGE);
                         
                         if (answers.size() > 1) Peformance.render(answers);
+                        
+                        answers.clear();
 
                         break;
                     }
@@ -491,12 +493,15 @@ public class Timer extends javax.swing.JFrame {
         toggleTimer(true);
         
         if (answers.size() > 1) Peformance.render(answers);
+        
+        answers.clear();
     }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnNextQuestionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextQuestionActionPerformed
         if (answers.size() == questionNumber) {
             toggleTimer(true);
             Peformance.render(answers);
+            answers.clear();
             
             return;
         }
