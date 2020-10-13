@@ -5,11 +5,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.swing.ButtonModel;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import javax.swing.JToggleButton;
 import javax.swing.text.PlainDocument;
 import model.Answer;
 import report.Peformance;
@@ -18,7 +14,6 @@ public class Timer extends javax.swing.JFrame {
 
     private int questionNumber;
     private long remainingMiliseconds;
-    private long questionMiliseconds;
     private long endMiliseconds;
     private Thread remainingThread;
     private Thread questionThread;
@@ -96,7 +91,7 @@ public class Timer extends javax.swing.JFrame {
 
                     if (answer.getExtra_miliseconds() < 0 && !answer.hasPenalty()) {
                         answer.setPenalty(true);
-                        lblQuestionTime.setForeground(new Color(255, 0, 0));
+                        lblQuestionTime.setForeground(new Color(240, 52, 52));
                     }
 
                     lblQuestionTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(answer.getAnswer_miliseconds()) % TimeUnit.HOURS.toMinutes(1),
@@ -121,6 +116,14 @@ public class Timer extends javax.swing.JFrame {
                     endMiliseconds -= 1000;    
 
                     if (endMiliseconds < 0) endMiliseconds = remainingMiliseconds;
+                    
+                    if (endMiliseconds > remainingMiliseconds) {
+                        lblEndTime.setForeground(new Color(240, 52, 52));
+                    } else if (endMiliseconds == remainingMiliseconds) {
+                        lblEndTime.setForeground(new Color(40, 40, 40));
+                    } else {
+                        lblEndTime.setForeground(new Color(30, 130, 76));
+                    }
 
                     lblEndTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(endMiliseconds),
                         TimeUnit.MILLISECONDS.toMinutes(endMiliseconds) % TimeUnit.HOURS.toMinutes(1),
@@ -259,7 +262,7 @@ public class Timer extends javax.swing.JFrame {
         radioFifthOption.setEnabled(false);
 
         try {
-            txtHours.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##:##:##")));
+            txtHours.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##:##")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
@@ -441,7 +444,6 @@ public class Timer extends javax.swing.JFrame {
         for (String timePart : time.split(":")) {
             if (partIndex == 0) timestamp += Integer.parseInt(timePart) * 36e+5;
             if (partIndex == 1) timestamp += Integer.parseInt(timePart) * 6e+4;
-            if (partIndex == 2) timestamp += Integer.parseInt(timePart) * 1e+3;
                     
             partIndex++;
         }
@@ -525,17 +527,22 @@ public class Timer extends javax.swing.JFrame {
             TimeUnit.MILLISECONDS.toSeconds(lastAnswer.getAnswer_miliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
         
-        long latestSum = answers.stream().mapToLong(a -> a.getAnswer_miliseconds()).sum();
-        int answered   = questionNumber - answers.size();
+        long extraSum = answers.stream().mapToLong(a -> a.getExtra_miliseconds()).sum();
+        int answered = questionNumber - answers.size();
         
-        endMiliseconds = remainingMiliseconds - ((remainingMiliseconds - (latestSum / answered)) / answered);
+        if (extraSum < 0) {
+            endMiliseconds = remainingMiliseconds + ((remainingMiliseconds - (extraSum / answered)) / answered);
+        } else {
+            endMiliseconds = remainingMiliseconds - ((remainingMiliseconds - (extraSum / answered)) / answered);
+        }
         
         String symbol = lastAnswer.getExtra_miliseconds() == 0 ? "" : (lastAnswer.getExtra_miliseconds() > 0 ? "+" : "-");
         Color color = lastAnswer.getExtra_miliseconds() == 0 ? new Color(40, 40, 40) : (lastAnswer.getExtra_miliseconds() > 0 ? new Color(30, 130, 76) : new Color(240, 52, 52));
+        long  extraMiliseconds = lastAnswer.getExtra_miliseconds() < 0 ? lastAnswer.getExtra_miliseconds() * -1 : lastAnswer.getExtra_miliseconds();        
         
         lblPenaltyAndExtraTime.setForeground(color);
-        lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(lastAnswer.getExtra_miliseconds()) % TimeUnit.HOURS.toMinutes(1),
-            TimeUnit.MILLISECONDS.toSeconds(lastAnswer.getExtra_miliseconds()) % TimeUnit.MINUTES.toSeconds(1))
+        lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(extraMiliseconds) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(extraMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
         );
         
         Answer nextAnswer = new Answer();
