@@ -88,7 +88,7 @@ public class Timer extends javax.swing.JFrame {
                         
                         break;
                     }
-
+                    
                     answer.setAnswer_miliseconds(answer.getAnswer_miliseconds() + 1000);
                     answer.setExtra_miliseconds(answer.getMax_miliseconds() - answer.getAnswer_miliseconds());
 
@@ -155,7 +155,7 @@ public class Timer extends javax.swing.JFrame {
         lblLatestTime = new javax.swing.JLabel();
         btnNextQuestion = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        jLabel16 = new javax.swing.JLabel();
+        lblOption = new javax.swing.JLabel();
         radioFirstOption = new javax.swing.JRadioButton();
         radioSecondOption = new javax.swing.JRadioButton();
         radioThirdOption = new javax.swing.JRadioButton();
@@ -233,7 +233,7 @@ public class Timer extends javax.swing.JFrame {
             }
         });
 
-        jLabel16.setText("Alternativas");
+        lblOption.setText("Alternativas da Questão");
 
         questionGroup.add(radioFirstOption);
         radioFirstOption.setSelected(true);
@@ -328,7 +328,7 @@ public class Timer extends javax.swing.JFrame {
                                         .addComponent(radioFourthOption)
                                         .addGap(10, 10, 10)
                                         .addComponent(radioFifthOption))
-                                    .addComponent(jLabel16))
+                                    .addComponent(lblOption))
                                 .addGap(0, 15, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -376,7 +376,7 @@ public class Timer extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel16)
+                .addComponent(lblOption)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(radioFirstOption)
@@ -411,6 +411,7 @@ public class Timer extends javax.swing.JFrame {
         lblQuestionTime.setText("00:00");
         lblQuestionTime.setForeground(new Color(40, 40, 40));
         lblRemainingTime.setText("00:00:00");
+        lblOption.setText("Alternativas da Questão");
         remainingMiliseconds = 0;
         questionNumber = 0;
         endMiliseconds = 0;
@@ -476,6 +477,7 @@ public class Timer extends javax.swing.JFrame {
         answers.add(answer);
         (questionThread = questionTimer(answer)).start();
         
+        lblOption.setText("Alternativas da Questão: " + answers.size());
         lblMaxTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(answer.getMax_miliseconds()) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(answer.getMax_miliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
@@ -518,23 +520,18 @@ public class Timer extends javax.swing.JFrame {
             TimeUnit.MILLISECONDS.toSeconds(lastAnswer.getAnswer_miliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
         
-        long extraMiliseconds = answers.stream().mapToLong(a -> a.getExtra_miliseconds()).sum();
-        String symbol         = extraMiliseconds == 0 ? "" : (extraMiliseconds > 0 ? "+" : "-");
-        Color color           = extraMiliseconds == 0 ? new Color(40, 40, 40) : (extraMiliseconds > 0 ? new Color(30, 130, 76) : new Color(240, 52, 52));
+        long latestSum = answers.stream().mapToLong(a -> a.getAnswer_miliseconds()).sum();
+        int answered   = questionNumber - answers.size();
         
-        endMiliseconds = endMiliseconds - (extraMiliseconds / answers.size());
+        endMiliseconds = remainingMiliseconds - ((remainingMiliseconds - (latestSum / answered)) / answered);
+        
+        String symbol = lastAnswer.getExtra_miliseconds() == 0 ? "" : (lastAnswer.getExtra_miliseconds() > 0 ? "+" : "-");
+        Color color = lastAnswer.getExtra_miliseconds() == 0 ? new Color(40, 40, 40) : (lastAnswer.getExtra_miliseconds() > 0 ? new Color(30, 130, 76) : new Color(240, 52, 52));
+        
         lblPenaltyAndExtraTime.setForeground(color);
-        
-        if (extraMiliseconds >= 36e+5 || extraMiliseconds <= -36e+5) {
-            lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(extraMiliseconds),
-                TimeUnit.MILLISECONDS.toMinutes(extraMiliseconds) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(extraMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
-            );
-        } else {
-            lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(extraMiliseconds) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(extraMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
-            );
-        }
+        lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(lastAnswer.getExtra_miliseconds()) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(lastAnswer.getExtra_miliseconds()) % TimeUnit.MINUTES.toSeconds(1))
+        );
         
         Answer nextAnswer = new Answer();
         
@@ -545,6 +542,7 @@ public class Timer extends javax.swing.JFrame {
         answers.add(nextAnswer);
         (questionThread = questionTimer(nextAnswer)).start();
         
+        lblOption.setText("Alternativas da Questão: " + answers.size());
         lblMaxTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(nextAnswer.getMax_miliseconds()) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(nextAnswer.getMax_miliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
@@ -575,7 +573,6 @@ public class Timer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -585,6 +582,7 @@ public class Timer extends javax.swing.JFrame {
     private javax.swing.JLabel lblEndTime;
     private javax.swing.JLabel lblLatestTime;
     private javax.swing.JLabel lblMaxTime;
+    private javax.swing.JLabel lblOption;
     private javax.swing.JLabel lblPenaltyAndExtraTime;
     private javax.swing.JLabel lblQuestionTime;
     private javax.swing.JLabel lblRemainingTime;
