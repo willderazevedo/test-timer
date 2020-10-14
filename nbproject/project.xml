@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>TestTimer</name>
             <source-roots>
+                <root id="src.jasper.dir" name="Jasper Templates"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
