@@ -1,179 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="peformance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="feb344cd-4cde-4034-8867-8c3d0f4b85a7">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<style name="DefaultStyle" forecolor="#000000">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{extraMiliseconds}.toLong() < 0]]></conditionExpression>
-			<style forecolor="#F03434"/>
-		</conditionalStyle>
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{extraMiliseconds}.toLong() > 0]]></conditionExpression>
-			<style forecolor="#1E824C"/>
-		</conditionalStyle>
-	</style>
-	<parameter name="QUESTION_NUMBER" class="java.lang.Integer"/>
-	<parameter name="ACTUAL_DATE" class="java.lang.Long"/>
-	<parameter name="CONCLUSION_TIME" class="java.lang.Long"/>
-	<parameter name="REMAINING_TIME" class="java.lang.Long"/>
-	<field name="maxMiliseconds" class="java.lang.Long"/>
-	<field name="answerMiliseconds" class="java.lang.Long"/>
-	<field name="extraMiliseconds" class="java.lang.Long"/>
-	<field name="option" class="java.lang.String"/>
-	<field name="answered" class="java.lang.Boolean"/>
-	<field name="penalty" class="java.lang.Boolean"/>
-	<field name="question" class="java.lang.Integer"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="peformance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a47b3e2c-f5c3-4219-bb4a-6a385ae08818">
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="555" height="79" uuid="ac785ed9-c9f8-4945-905d-bb7f62b71f96"/>
-				<textElement textAlignment="Center">
-					<font size="24"/>
-				</textElement>
-				<text><![CDATA[Relatório de Peformance]]></text>
-			</staticText>
-		</band>
+		<band height="79" splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="79" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="16" width="127" height="16" uuid="6cfcb818-9388-4825-b817-5054367bbbc8"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Número de Questões:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="0" width="104" height="16" uuid="072dff45-76dd-430e-8fbf-722e693a3710"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Data do Relatório:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="137" y="16" width="127" height="16" uuid="838a7108-8f3b-4835-85f4-fef9a056d12a"/>
-				<textElement>
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{QUESTION_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy HH:mm:ss">
-				<reportElement x="111" y="0" width="189" height="16" uuid="4e545453-ef6d-43e2-a9aa-b647eb3b39de"/>
-				<textElement>
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date($P{ACTUAL_DATE}.toLong())]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="32" width="86" height="16" uuid="c0b50076-cfb8-4236-8e1f-4922b12b3442"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Concluído em:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="49" width="104" height="16" uuid="e6f9e34b-9134-4fee-a164-e217e71b6c63"/>
-				<textElement>
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Tempo restante:]]></text>
-			</staticText>
-			<textField pattern="HH:mm:ss">
-				<reportElement x="86" y="32" width="100" height="16" uuid="5ce5603b-e7cb-4071-8528-f65f1577bbff"/>
-				<textElement>
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date($P{CONCLUSION_TIME}.toLong())]]></textFieldExpression>
-				<patternExpression><![CDATA[($P{CONCLUSION_TIME}.toLong() >= 36e+5 ? "HH:mm:ss" : "mm:ss")]]></patternExpression>
-			</textField>
-			<textField pattern="HH:mm:ss">
-				<reportElement x="104" y="48" width="100" height="17" uuid="c2f65d8a-54c7-464c-ae22-1be74d01d5ba"/>
-				<textElement>
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date($P{REMAINING_TIME}.toLong())]]></textFieldExpression>
-				<patternExpression><![CDATA[($P{REMAINING_TIME}.toLong() >= 36e+5 ? "HH:mm:ss" : "mm:ss")]]></patternExpression>
-			</textField>
-		</band>
+		<band height="35" splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="32" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="111" height="20" uuid="b69573fd-76d4-4084-8254-8e1f348c4c88"/>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[Questão]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="111" y="0" width="111" height="20" uuid="a40ecb36-98cf-4c63-b94d-115c452d1c3b"/>
-				<textElement textAlignment="Right"/>
-				<text><![CDATA[Tempo de resposta]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="222" y="0" width="111" height="20" uuid="4b97d7c9-4ab8-4871-a0c3-4a1fe2fc4bd8"/>
-				<textElement textAlignment="Right"/>
-				<text><![CDATA[Tempo máximo]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="333" y="0" width="111" height="20" uuid="e875c47f-b39b-44b7-a81b-d2a81723f8b4"/>
-				<textElement textAlignment="Right"/>
-				<text><![CDATA[Acréscimo/Penalidade]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="444" y="0" width="111" height="20" uuid="1e072a9e-fd0d-455f-baf5-68cacdf71fbc"/>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[Opção]]></text>
-			</staticText>
-		</band>
+		<band height="61" splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="22" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="111" height="20" uuid="148415e9-92f2-4738-9eae-d79d978fa6c9"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{question}]]></textFieldExpression>
-			</textField>
-			<textField pattern="mm:ss">
-				<reportElement x="111" y="0" width="111" height="20" uuid="448d5096-f158-40ab-a97a-d498c6076d5d"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[new java.util.Date($F{answerMiliseconds}.toLong())]]></textFieldExpression>
-			</textField>
-			<textField pattern="mm:ss">
-				<reportElement x="222" y="0" width="111" height="20" uuid="8f81e8f9-4aa0-4412-980d-41fff83654a8"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[new java.util.Date($F{maxMiliseconds}.toLong())]]></textFieldExpression>
-			</textField>
-			<textField pattern="mm:ss">
-				<reportElement style="DefaultStyle" x="333" y="0" width="111" height="20" uuid="28c1e11a-97e6-426f-924f-c7d5d674443b"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[($F{extraMiliseconds}.toLong() < 0.toLong() ? new java.util.Date($F{extraMiliseconds}.toLong() * -1.toLong()) : new java.util.Date($F{extraMiliseconds}.toLong()))]]></textFieldExpression>
-				<patternExpression><![CDATA[($F{extraMiliseconds}.toLong() == 0 ? "-mm:ss" : ($F{extraMiliseconds}.toLong() < 0 ? "-mm:ss" : "+mm:ss"))]]></patternExpression>
-			</textField>
-			<textField>
-				<reportElement x="444" y="0" width="111" height="20" uuid="cbee7856-c8b1-448d-b18b-1c33c57e497f"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{option}]]></textFieldExpression>
-			</textField>
-		</band>
+		<band height="125" splitType="Stretch"/>
 	</detail>
 	<columnFooter>
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch">
-			<textField>
-				<reportElement x="435" y="34" width="80" height="20" uuid="fa893bb0-6c6e-43d0-b308-2acee27f04ea"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="515" y="34" width="40" height="20" uuid="166efb1f-c14a-4229-8e34-31710933ef86"/>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
+		<band height="54" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>
