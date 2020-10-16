@@ -13,14 +13,14 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class Peformance {
     
-    public static void render(List<Answer> answers, long remainingMiliseconds) throws JRException {
+    public static void render(List<Answer> answers, long remainingMiliseconds, long currentMiliseconds) throws JRException {
         answers = answers.stream().filter(a -> a.isAnswered()).collect(Collectors.toList());
         
         HashMap params = new HashMap();
         
         params.put("QUESTION_NUMBER", answers.size());
         params.put("ACTUAL_DATE", (new Date()).getTime());
-        params.put("CONCLUSION_TIME", answers.stream().mapToLong(a -> a.getAnswerMiliseconds()).sum());
+        params.put("CONCLUSION_TIME", currentMiliseconds);
         params.put("REMAINING_TIME", remainingMiliseconds);
         
         JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(answers);

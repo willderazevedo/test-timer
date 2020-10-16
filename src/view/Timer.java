@@ -16,9 +16,13 @@ public class Timer extends javax.swing.JFrame {
     private long remainingMiliseconds;
     private long endMiliseconds;
     private long minQuestionMiliseconds;
-    private Thread remainingThread;
-    private Thread questionThread;
-    private Thread endThread;
+    private long maxMiliseconds;
+    private long currentMiliseconds;
+    private Thread remainingThread = null;
+    private Thread questionThread = null;
+    private Thread endThread = null;
+    private Thread maxThread = null;
+    private Thread currentThread = null;
     private final List<Answer> answers = new ArrayList<>();
     
     public Timer() {
@@ -47,14 +51,12 @@ public class Timer extends javax.swing.JFrame {
                     remainingMiliseconds -= 1000;    
 
                     if (remainingMiliseconds < 0) {
-                        long remainingTime = remainingMiliseconds;
-                        
                         toggleTimer(true);
                         JOptionPane.showMessageDialog(null, "Tempo esgotado", "Timer", JOptionPane.INFORMATION_MESSAGE);
                         
                         if (answers.size() > 1) {
                             try {
-                                Peformance.render(answers, remainingTime);
+                                Peformance.render(answers, 0, currentMiliseconds);
                             } catch (Exception ex) {
                                 JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Timer", JOptionPane.ERROR_MESSAGE);
                             }
@@ -80,7 +82,7 @@ public class Timer extends javax.swing.JFrame {
             public void run() {
                 while (true){
                     if (answer.isAnswered() || Thread.interrupted()) {
-                        lblQuestionTime.setText("00:00");
+                        lblQuestionTime.setText("00:00:00");
                         lblQuestionTime.setForeground(new Color(40, 40, 40));
 
                         break;
@@ -89,7 +91,7 @@ public class Timer extends javax.swing.JFrame {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
-                        lblQuestionTime.setText("00:00");
+                        lblQuestionTime.setText("00:00:00");
                         lblQuestionTime.setForeground(new Color(40, 40, 40));
                         
                         break;
@@ -103,7 +105,8 @@ public class Timer extends javax.swing.JFrame {
                         lblQuestionTime.setForeground(new Color(240, 52, 52));
                     }
 
-                    lblQuestionTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(answer.getAnswerMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
+                    lblQuestionTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(answer.getAnswerMiliseconds()),
+                        TimeUnit.MILLISECONDS.toMinutes(answer.getAnswerMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
                         TimeUnit.MILLISECONDS.toSeconds(answer.getAnswerMiliseconds()) % TimeUnit.MINUTES.toSeconds(1))
                     );
                 }
@@ -115,7 +118,7 @@ public class Timer extends javax.swing.JFrame {
         return new Thread ()  {
             @Override
             public void run() {
-                while (endMiliseconds >= 0 || !Thread.interrupted()){
+                while (endMiliseconds > 0 || !Thread.interrupted()){
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
@@ -123,8 +126,6 @@ public class Timer extends javax.swing.JFrame {
                     }
 
                     endMiliseconds -= 1000;    
-
-                    if (endMiliseconds < 0) endMiliseconds = remainingMiliseconds;
                     
                     if (endMiliseconds > remainingMiliseconds) {
                         lblEndTime.setForeground(new Color(240, 52, 52));
@@ -137,6 +138,52 @@ public class Timer extends javax.swing.JFrame {
                     lblEndTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(endMiliseconds),
                         TimeUnit.MILLISECONDS.toMinutes(endMiliseconds) % TimeUnit.HOURS.toMinutes(1),
                         TimeUnit.MILLISECONDS.toSeconds(endMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
+                    );
+                }
+            }
+        };
+    }
+    
+    private Thread maxTimer() {
+        return new Thread ()  {
+            @Override
+            public void run() {
+                while (maxMiliseconds >= 0 || !Thread.interrupted()){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        break;
+                    }
+
+                    maxMiliseconds -= 1000;    
+
+                    lblMaxTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(maxMiliseconds),
+                        TimeUnit.MILLISECONDS.toMinutes(maxMiliseconds) % TimeUnit.HOURS.toMinutes(1),
+                        TimeUnit.MILLISECONDS.toSeconds(maxMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
+                    );
+                }
+            }
+        };
+    }
+    
+    private Thread currentTimer() {
+        return new Thread ()  {
+            @Override
+            public void run() {
+                while (true){
+                    if (Thread.interrupted()) break;
+                    
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        break;
+                    }
+
+                    currentMiliseconds += 1000;    
+
+                    lblCurrentTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(currentMiliseconds),
+                        TimeUnit.MILLISECONDS.toMinutes(currentMiliseconds) % TimeUnit.HOURS.toMinutes(1),
+                        TimeUnit.MILLISECONDS.toSeconds(currentMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
                     );
                 }
             }
@@ -193,6 +240,18 @@ public class Timer extends javax.swing.JFrame {
         txtHours = new javax.swing.JFormattedTextField();
         txtMinQuestionTime = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        lblCurrentTime = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel6 = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
+        jLabel8 = new javax.swing.JLabel();
+        jSeparator4 = new javax.swing.JSeparator();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        lblTotalPositive = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        lblTotalNegative = new javax.swing.JLabel();
 
         jButton2.setText("jButton2");
 
@@ -201,9 +260,9 @@ public class Timer extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Timer");
 
-        jLabel1.setText("Questões");
+        jLabel1.setText("Número Questões");
 
-        jLabel2.setText("Tempo");
+        jLabel2.setText("Tempo de Prova");
 
         btnBegin.setText("Iniciar");
         btnBegin.addActionListener(new java.awt.event.ActionListener() {
@@ -230,19 +289,19 @@ public class Timer extends javax.swing.JFrame {
 
         lblMaxTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblMaxTime.setForeground(new java.awt.Color(40, 40, 40));
-        lblMaxTime.setText("00:00");
+        lblMaxTime.setText("00:00:00");
 
         jLabel7.setText("Tempo máximo");
 
         lblQuestionTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblQuestionTime.setForeground(new java.awt.Color(40, 40, 40));
-        lblQuestionTime.setText("00:00");
+        lblQuestionTime.setText("00:00:00");
 
         jLabel9.setText("Acréscimo/Penalidades");
 
         lblPenaltyAndExtraTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblPenaltyAndExtraTime.setForeground(new java.awt.Color(40, 40, 40));
-        lblPenaltyAndExtraTime.setText("00:00");
+        lblPenaltyAndExtraTime.setText("00:00:00");
 
         jLabel11.setText("Previsão de Término");
 
@@ -254,7 +313,7 @@ public class Timer extends javax.swing.JFrame {
 
         lblLatestTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblLatestTime.setForeground(new java.awt.Color(40, 40, 40));
-        lblLatestTime.setText("00:00");
+        lblLatestTime.setText("00:00:00");
 
         btnNextQuestion.setText("Próxima questão");
         btnNextQuestion.setEnabled(false);
@@ -300,77 +359,136 @@ public class Timer extends javax.swing.JFrame {
         }
         txtMinQuestionTime.setText("1:00");
 
-        jLabel3.setText("Resposta");
+        jLabel3.setText("Tempo mínimo de Resposta");
+
+        jLabel12.setText("Tempo decorrido");
+
+        lblCurrentTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        lblCurrentTime.setForeground(new java.awt.Color(40, 40, 40));
+        lblCurrentTime.setText("00:00:00");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel6.setText("Tempo Geral");
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel8.setText("Questão Atual");
+
+        jSeparator4.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel10.setText("Totais");
+
+        jLabel14.setText("Total de Acréscimo");
+
+        lblTotalPositive.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        lblTotalPositive.setForeground(new java.awt.Color(30, 130, 76));
+        lblTotalPositive.setText("00:00:00");
+
+        jLabel16.setText("Total de Penalidade");
+
+        lblTotalNegative.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        lblTotalNegative.setForeground(new java.awt.Color(240, 52, 52));
+        lblTotalNegative.setText("00:00:00");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
+            .addComponent(jSeparator2)
+            .addComponent(jSeparator3)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(radioFirstOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioSecondOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioThirdOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioFourthOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioFifthOption)
+                .addGap(70, 70, 70))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(txtQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtHours)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(txtQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtHours, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(txtMinQuestionTime, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jLabel2)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtMinQuestionTime)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnBegin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnNextQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblRemainingTime)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel11)
+                                    .addComponent(lblEndTime))
+                                .addGap(47, 47, 47)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel12)
+                                    .addComponent(lblCurrentTime)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(10, 10, 10)
-                                        .addComponent(radioFirstOption)
-                                        .addGap(10, 10, 10)
-                                        .addComponent(radioSecondOption)
-                                        .addGap(10, 10, 10)
-                                        .addComponent(radioThirdOption)
-                                        .addGap(10, 10, 10)
-                                        .addComponent(radioFourthOption)
-                                        .addGap(10, 10, 10)
-                                        .addComponent(radioFifthOption))
-                                    .addComponent(lblOption))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(lblQuestionTime)
-                            .addComponent(jLabel13)
-                            .addComponent(lblLatestTime))
-                        .addGap(42, 42, 42)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblMaxTime)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel9)
-                            .addComponent(lblPenaltyAndExtraTime)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblRemainingTime)
-                            .addComponent(jLabel4))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11)
-                            .addComponent(lblEndTime))))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblQuestionTime)
+                                            .addComponent(jLabel5))
+                                        .addGap(29, 29, 29)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel7)
+                                            .addComponent(lblMaxTime)))
+                                    .addComponent(jLabel8)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblLatestTime)
+                                            .addComponent(jLabel13))
+                                        .addGap(30, 30, 30)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel9)
+                                            .addComponent(lblPenaltyAndExtraTime))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel14)
+                                    .addComponent(jLabel10)
+                                    .addComponent(lblTotalPositive)
+                                    .addComponent(jLabel16)
+                                    .addComponent(lblTotalNegative))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnNextQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblOption)
+                        .addGap(0, 276, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,37 +503,71 @@ public class Timer extends javax.swing.JFrame {
                     .addComponent(txtHours, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMinQuestionTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnStop)
-                    .addComponent(btnBegin))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel11))
-                .addGap(1, 1, 1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRemainingTime)
-                    .addComponent(lblEndTime))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblMaxTime))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblQuestionTime)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblLatestTime)
-                    .addComponent(lblPenaltyAndExtraTime))
+                    .addComponent(btnBegin)
+                    .addComponent(btnStop))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addGap(6, 6, 6)
+                            .addComponent(lblCurrentTime))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblRemainingTime)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblEndTime)))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblLatestTime))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel5))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblMaxTime)
+                                    .addComponent(lblQuestionTime))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblPenaltyAndExtraTime)))
+                        .addGap(23, 23, 23))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblTotalPositive)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel16)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblTotalNegative))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblOption)
@@ -428,7 +580,7 @@ public class Timer extends javax.swing.JFrame {
                     .addComponent(radioFifthOption))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnNextQuestion)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -447,11 +599,14 @@ public class Timer extends javax.swing.JFrame {
         radioFourthOption.setEnabled(!stop);
         radioFifthOption.setEnabled(!stop);
         lblEndTime.setText("00:00:00");
-        lblLatestTime.setText("00:00");
-        lblMaxTime.setText("00:00");
-        lblPenaltyAndExtraTime.setText("00:00");
+        lblCurrentTime.setText("00:00:00");
+        lblTotalPositive.setText("00:00:00");
+        lblTotalNegative.setText("00:00:00");
+        lblLatestTime.setText("00:00:00");
+        lblMaxTime.setText("00:00:00");
+        lblPenaltyAndExtraTime.setText("00:00:00");
         lblPenaltyAndExtraTime.setForeground(new Color(40, 40, 40));
-        lblQuestionTime.setText("00:00");
+        lblQuestionTime.setText("00:00:00");
         lblQuestionTime.setForeground(new Color(40, 40, 40));
         lblRemainingTime.setText("00:00:00");
         lblOption.setText("Alternativas da Questão");
@@ -463,6 +618,9 @@ public class Timer extends javax.swing.JFrame {
             remainingThread.interrupt();
             questionThread.interrupt();
             endThread.interrupt();
+            currentThread.interrupt();
+            
+            if (maxThread != null) maxThread.interrupt();
         }
     }
     
@@ -503,6 +661,7 @@ public class Timer extends javax.swing.JFrame {
         
         (remainingThread = remainingTimer()).start();
         (endThread = endTimer()).start();
+        (currentThread = currentTimer()).start();
         
         Answer answer = new Answer();
         
@@ -515,7 +674,8 @@ public class Timer extends javax.swing.JFrame {
         (questionThread = questionTimer(answer)).start();
         
         lblOption.setText("Alternativas da Questão: " + answer.getQuestion());
-        lblMaxTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(answer.getMaxMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
+        lblMaxTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(answer.getMaxMiliseconds()),
+            TimeUnit.MILLISECONDS.toMinutes(answer.getMaxMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(answer.getMaxMiliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
     }//GEN-LAST:event_btnBeginActionPerformed
@@ -531,7 +691,7 @@ public class Timer extends javax.swing.JFrame {
         
         if (answers.size() > 1) {
             try {
-                Peformance.render(answers, remainingTime);
+                Peformance.render(answers, remainingTime, currentMiliseconds);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Timer", JOptionPane.ERROR_MESSAGE);
             }
@@ -560,7 +720,7 @@ public class Timer extends javax.swing.JFrame {
             toggleTimer(true);
             
             try {
-                Peformance.render(answers, remainingTime);
+                Peformance.render(answers, remainingTime, currentMiliseconds);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Timer", JOptionPane.ERROR_MESSAGE);
             }
@@ -572,40 +732,64 @@ public class Timer extends javax.swing.JFrame {
         
         questionThread.interrupt();
         
-        lblLatestTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(lastAnswer.getAnswerMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
+        lblLatestTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(lastAnswer.getAnswerMiliseconds()),
+            TimeUnit.MILLISECONDS.toMinutes(lastAnswer.getAnswerMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(lastAnswer.getAnswerMiliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
         
-        long extraSum = answers.stream().mapToLong(a -> a.getExtraMiliseconds()).sum();
         int answered = questionNumber - answers.size();
+        long endTime = lastAnswer.getExtraMiliseconds() < 0 ?
+            remainingMiliseconds + (lastAnswer.getExtraMiliseconds() / answered) :
+            remainingMiliseconds - (lastAnswer.getExtraMiliseconds() / answered)
+        ;
         
-        if (extraSum < 0) {
-            endMiliseconds = remainingMiliseconds + ((remainingMiliseconds - (extraSum / answered)) / answered);
-        } else {
-            endMiliseconds = remainingMiliseconds - ((remainingMiliseconds - (extraSum / answered)) / answered);
-        }
-        
+        if (endTime > 0) endMiliseconds = endTime;
+
         String symbol = lastAnswer.getExtraMiliseconds() == 0 ? "" : (lastAnswer.getExtraMiliseconds() > 0 ? "+" : "-");
         Color color = lastAnswer.getExtraMiliseconds() == 0 ? new Color(40, 40, 40) : (lastAnswer.getExtraMiliseconds() > 0 ? new Color(30, 130, 76) : new Color(240, 52, 52));
         long  extraMiliseconds = lastAnswer.getExtraMiliseconds() < 0 ? lastAnswer.getExtraMiliseconds() * -1 : lastAnswer.getExtraMiliseconds();        
         
         lblPenaltyAndExtraTime.setForeground(color);
-        lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(extraMiliseconds) % TimeUnit.HOURS.toMinutes(1),
+        lblPenaltyAndExtraTime.setText(symbol + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(extraMiliseconds),
+            TimeUnit.MILLISECONDS.toMinutes(extraMiliseconds) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(extraMiliseconds) % TimeUnit.MINUTES.toSeconds(1))
         );
+        
+        long totalPositive = answers.stream().filter(a -> a.getExtraMiliseconds() > 0).mapToLong(a -> a.getExtraMiliseconds()).max().orElse(0);
+        long totalNegative = answers.stream().filter(a -> a.getExtraMiliseconds() < 0).mapToLong(a -> a.getExtraMiliseconds()).min().orElse(0) * -1;
+        
+        lblTotalPositive.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(totalPositive),
+            TimeUnit.MILLISECONDS.toMinutes(totalPositive) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(totalPositive) % TimeUnit.MINUTES.toSeconds(1))
+        );
+        
+        lblTotalNegative.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(totalNegative),
+            TimeUnit.MILLISECONDS.toMinutes(totalNegative) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(totalNegative) % TimeUnit.MINUTES.toSeconds(1))
+        );
+        
+        long maxTime = (remainingMiliseconds / (questionNumber - answers.size())) + lastAnswer.getExtraMiliseconds();
+        
+        if (maxTime > remainingMiliseconds) {
+            maxTime = remainingMiliseconds;
+            maxMiliseconds = maxTime;
+            
+            if (maxThread == null) (maxThread = maxTimer()).start();
+        }
         
         Answer nextAnswer = new Answer();
         
         nextAnswer.setQuestion(answers.size() + 1);
         nextAnswer.setAnswerMiliseconds(0);
-        nextAnswer.setMaxMiliseconds(remainingMiliseconds / (questionNumber - answers.size()));
+        nextAnswer.setMaxMiliseconds(maxTime);
         nextAnswer.setAnswered(false);
         
         answers.add(nextAnswer);
         (questionThread = questionTimer(nextAnswer)).start();
         
         lblOption.setText("Alternativas da Questão: " + nextAnswer.getQuestion());
-        lblMaxTime.setText(String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(nextAnswer.getMaxMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
+        lblMaxTime.setText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(nextAnswer.getMaxMiliseconds()),
+            TimeUnit.MILLISECONDS.toMinutes(nextAnswer.getMaxMiliseconds()) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(nextAnswer.getMaxMiliseconds()) % TimeUnit.MINUTES.toSeconds(1))
         );
         
@@ -632,16 +816,26 @@ public class Timer extends javax.swing.JFrame {
     private javax.swing.JButton btnStop;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JLabel lblCurrentTime;
     private javax.swing.JLabel lblEndTime;
     private javax.swing.JLabel lblLatestTime;
     private javax.swing.JLabel lblMaxTime;
@@ -649,6 +843,8 @@ public class Timer extends javax.swing.JFrame {
     private javax.swing.JLabel lblPenaltyAndExtraTime;
     private javax.swing.JLabel lblQuestionTime;
     private javax.swing.JLabel lblRemainingTime;
+    private javax.swing.JLabel lblTotalNegative;
+    private javax.swing.JLabel lblTotalPositive;
     private javax.swing.ButtonGroup questionGroup;
     private javax.swing.JRadioButton radioFifthOption;
     private javax.swing.JRadioButton radioFirstOption;

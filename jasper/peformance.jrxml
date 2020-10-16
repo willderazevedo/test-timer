@@ -82,21 +82,23 @@
 				</textElement>
 				<text><![CDATA[Tempo restante:]]></text>
 			</staticText>
-			<textField pattern="HH:mm:ss">
+			<textField pattern="">
 				<reportElement x="86" y="32" width="100" height="16" uuid="5ce5603b-e7cb-4071-8528-f65f1577bbff"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date($P{CONCLUSION_TIME}.toLong())]]></textFieldExpression>
-				<patternExpression><![CDATA[($P{CONCLUSION_TIME}.toLong() >= 36e+5 ? "HH:mm:ss" : "mm:ss")]]></patternExpression>
+				<textFieldExpression><![CDATA[java.lang.String.format("%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours($P{CONCLUSION_TIME}.toLong()),
+java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes($P{CONCLUSION_TIME}.toLong()) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds($P{CONCLUSION_TIME}.toLong()) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1))]]></textFieldExpression>
 			</textField>
-			<textField pattern="HH:mm:ss">
+			<textField pattern="">
 				<reportElement x="104" y="48" width="100" height="17" uuid="c2f65d8a-54c7-464c-ae22-1be74d01d5ba"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date($P{REMAINING_TIME}.toLong())]]></textFieldExpression>
-				<patternExpression><![CDATA[($P{REMAINING_TIME}.toLong() >= 36e+5 ? "HH:mm:ss" : "mm:ss")]]></patternExpression>
+				<textFieldExpression><![CDATA[java.lang.String.format("%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours($P{REMAINING_TIME}.toLong()),
+java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes($P{REMAINING_TIME}.toLong()) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds($P{REMAINING_TIME}.toLong()) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -136,21 +138,35 @@
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{question}]]></textFieldExpression>
 			</textField>
-			<textField pattern="mm:ss">
+			<textField pattern="">
 				<reportElement x="111" y="0" width="111" height="20" uuid="448d5096-f158-40ab-a97a-d498c6076d5d"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[new java.util.Date($F{answerMiliseconds}.toLong())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[java.lang.String.format("%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours($F{answerMiliseconds}.toLong()),
+java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes($F{answerMiliseconds}.toLong()) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds($F{answerMiliseconds}.toLong()) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1))]]></textFieldExpression>
 			</textField>
-			<textField pattern="mm:ss">
+			<textField pattern="">
 				<reportElement x="222" y="0" width="111" height="20" uuid="8f81e8f9-4aa0-4412-980d-41fff83654a8"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[new java.util.Date($F{maxMiliseconds}.toLong())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[java.lang.String.format("%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours($F{maxMiliseconds}.toLong()),
+java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes($F{maxMiliseconds}.toLong()) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds($F{maxMiliseconds}.toLong()) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1))]]></textFieldExpression>
 			</textField>
-			<textField pattern="mm:ss">
+			<textField pattern="">
 				<reportElement style="DefaultStyle" x="333" y="0" width="111" height="20" uuid="28c1e11a-97e6-426f-924f-c7d5d674443b"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[($F{extraMiliseconds}.toLong() < 0.toLong() ? new java.util.Date($F{extraMiliseconds}.toLong() * -1.toLong()) : new java.util.Date($F{extraMiliseconds}.toLong()))]]></textFieldExpression>
-				<patternExpression><![CDATA[($F{extraMiliseconds}.toLong() == 0 ? "-mm:ss" : ($F{extraMiliseconds}.toLong() < 0 ? "-mm:ss" : "+mm:ss"))]]></patternExpression>
+				<textFieldExpression><![CDATA[($F{extraMiliseconds}.toLong() == 0 ? "00:00:00" :
+    (
+        $F{extraMiliseconds}.toLong() < 0 ?
+            "-" + java.lang.String.format("%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours($F{extraMiliseconds}.toLong() * -1),
+            java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes($F{extraMiliseconds}.toLong() * -1) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+            java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds($F{extraMiliseconds}.toLong() * -1) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1))
+        :
+            "+" + java.lang.String.format("%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours($F{extraMiliseconds}.toLong()),
+            java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes($F{extraMiliseconds}.toLong()) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+            java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds($F{extraMiliseconds}.toLong()) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1))
+    )
+)]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="444" y="0" width="111" height="20" uuid="cbee7856-c8b1-448d-b18b-1c33c57e497f"/>
