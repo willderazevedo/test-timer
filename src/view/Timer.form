@@ -327,7 +327,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Quest&#xe3;o atual"/>
+        <Property name="text" type="java.lang.String" value="Tempo decorrido"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lblMaxTime">

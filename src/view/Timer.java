@@ -285,7 +285,7 @@ public class Timer extends javax.swing.JFrame {
 
         jLabel4.setText("Tempo restante");
 
-        jLabel5.setText("Questão atual");
+        jLabel5.setText("Tempo decorrido");
 
         lblMaxTime.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblMaxTime.setForeground(new java.awt.Color(40, 40, 40));
