@@ -2,9 +2,15 @@ package view;
 
 import filter.IntegerFilter;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Image;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.text.PlainDocument;
 import model.Answer;
@@ -28,6 +34,7 @@ public class Timer extends javax.swing.JFrame {
     public Timer() {
         initComponents();
         setLocationRelativeTo(null);
+        setIconImage(new javax.swing.ImageIcon("assets/logo.png").getImage());
         
         ((PlainDocument) txtQuestions.getDocument()).setDocumentFilter(new IntegerFilter());
         radioFirstOption.setActionCommand(radioFirstOption.getText());
@@ -52,13 +59,13 @@ public class Timer extends javax.swing.JFrame {
 
                     if (remainingMiliseconds < 0) {
                         toggleTimer(true);
-                        JOptionPane.showMessageDialog(null, "Tempo esgotado", "Timer", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Tempo esgotado", "Temporizador de Provas / Simulados", JOptionPane.INFORMATION_MESSAGE);
                         
                         if (answers.size() > 1) {
                             try {
                                 Peformance.render(answers, 0, currentMiliseconds);
                             } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Timer", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Temporizador de Provas / Simulados", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         
@@ -252,13 +259,19 @@ public class Timer extends javax.swing.JFrame {
         lblTotalPositive = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         lblTotalNegative = new javax.swing.JLabel();
+        lblLogo = new javax.swing.JLabel();
+        jSeparator5 = new javax.swing.JSeparator();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        lblLink = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
 
         jButton2.setText("jButton2");
 
         jLabel15.setText("jLabel15");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Timer");
+        setTitle("Temporizador de Provas / Simulados");
 
         jLabel1.setText("Número Questões");
 
@@ -390,6 +403,33 @@ public class Timer extends javax.swing.JFrame {
         lblTotalNegative.setForeground(new java.awt.Color(240, 52, 52));
         lblTotalNegative.setText("00:00:00");
 
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/full-logo.png"))); // NOI18N
+        lblLogo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblLogo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblLogoMouseClicked(evt);
+            }
+        });
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel17.setText("Telefone:");
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel19.setText("Website:");
+
+        lblLink.setForeground(new java.awt.Color(0, 153, 255));
+        lblLink.setText("http://solucaomendesgc.com.br");
+        lblLink.setToolTipText("Solução Informática");
+        lblLink.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblLink.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblLinkMouseClicked(evt);
+            }
+        });
+
+        jLabel21.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel21.setText("(85) 3467-5731 - (85) 98899-1815");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -397,22 +437,69 @@ public class Timer extends javax.swing.JFrame {
             .addComponent(jSeparator1)
             .addComponent(jSeparator2)
             .addComponent(jSeparator3)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(radioFirstOption)
-                .addGap(18, 18, 18)
-                .addComponent(radioSecondOption)
-                .addGap(18, 18, 18)
-                .addComponent(radioThirdOption)
-                .addGap(18, 18, 18)
-                .addComponent(radioFourthOption)
-                .addGap(18, 18, 18)
-                .addComponent(radioFifthOption)
-                .addGap(70, 70, 70))
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblRemainingTime)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            .addComponent(lblEndTime))
+                        .addGap(61, 61, 61)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(lblCurrentTime)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblQuestionTime)
+                                    .addComponent(jLabel5))
+                                .addGap(29, 29, 29)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(lblMaxTime)))
+                            .addComponent(jLabel8)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblLatestTime)
+                                    .addComponent(jLabel13))
+                                .addGap(30, 30, 30)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addComponent(lblPenaltyAndExtraTime))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel10)
+                            .addComponent(lblTotalPositive)
+                            .addComponent(jLabel16)
+                            .addComponent(lblTotalNegative))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnNextQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblOption)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addComponent(jSeparator5)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnBegin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(txtQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -425,75 +512,55 @@ public class Timer extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtMinQuestionTime)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnBegin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblRemainingTime)
-                                    .addComponent(jLabel4))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel11)
-                                    .addComponent(lblEndTime))
-                                .addGap(47, 47, 47)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(lblCurrentTime)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblQuestionTime)
-                                            .addComponent(jLabel5))
-                                        .addGap(29, 29, 29)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7)
-                                            .addComponent(lblMaxTime)))
-                                    .addComponent(jLabel8)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblLatestTime)
-                                            .addComponent(jLabel13))
-                                        .addGap(30, 30, 30)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel9)
-                                            .addComponent(lblPenaltyAndExtraTime))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel14)
-                                    .addComponent(jLabel10)
-                                    .addComponent(lblTotalPositive)
-                                    .addComponent(jLabel16)
-                                    .addComponent(lblTotalNegative))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                            .addComponent(txtMinQuestionTime, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnNextQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblOption)
-                        .addGap(0, 276, Short.MAX_VALUE))))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblLogo)
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel17)
+                            .addComponent(jLabel19))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblLink)
+                            .addComponent(jLabel21))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(radioFirstOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioSecondOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioThirdOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioFourthOption)
+                .addGap(18, 18, 18)
+                .addComponent(radioFifthOption)
+                .addGap(83, 83, 83))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lblLogo))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel17)
+                            .addComponent(jLabel21))
+                        .addGap(1, 1, 1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel19)
+                            .addComponent(lblLink))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
@@ -507,7 +574,7 @@ public class Timer extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBegin)
                     .addComponent(btnStop))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
@@ -630,7 +697,7 @@ public class Timer extends javax.swing.JFrame {
         String minTime   = txtMinQuestionTime.getText().trim();
 
         if (questions.isEmpty() || Integer.parseInt(questions) == 0 || testTime.equals(":") || minTime.equals(":")) {
-            JOptionPane.showMessageDialog(null, "Preencha o número de questões, tempo de prova e o tempo mínimo para resposta.", "Timer", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Preencha o número de questões, tempo de prova e o tempo mínimo para resposta.", "Temporizador de Provas / Simulados", JOptionPane.INFORMATION_MESSAGE);
             
             return;
         }
@@ -640,7 +707,7 @@ public class Timer extends javax.swing.JFrame {
         long maxMiliseconds = testTimestamp / Integer.parseInt(questions);
         
         if (maxMiliseconds < (minTimestamp + (minTimestamp * 0.5))) {
-            JOptionPane.showMessageDialog(null, "Número de questões e tempo de prova não são relativos,\n pois cada questão deve ter pelo menos 50% do tempo mínimo ("+ minTime +") para resposta.", "Timer", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Número de questões e tempo de prova não são relativos,\n pois cada questão deve ter pelo menos 50% do tempo mínimo ("+ minTime +") para resposta.", "Temporizador de Provas / Simulados", JOptionPane.INFORMATION_MESSAGE);
             
             return;
         }
@@ -693,7 +760,7 @@ public class Timer extends javax.swing.JFrame {
             try {
                 Peformance.render(answers, remainingTime, currentMiliseconds);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Timer", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Temporizador de Provas / Simulados", JOptionPane.ERROR_MESSAGE);
             }
         }
         
@@ -704,7 +771,7 @@ public class Timer extends javax.swing.JFrame {
         Answer lastAnswer = answers.get(answers.size() - 1);
         
         if (lastAnswer.getAnswerMiliseconds() < minQuestionMiliseconds) {
-            JOptionPane.showMessageDialog(null, "Tempo mínimo de resposta é "+ txtMinQuestionTime.getText() +".", "Timer", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tempo mínimo de resposta é "+ txtMinQuestionTime.getText() +".", "Temporizador de Provas / Simulados", JOptionPane.INFORMATION_MESSAGE);
             
             return;
         }
@@ -722,7 +789,7 @@ public class Timer extends javax.swing.JFrame {
             try {
                 Peformance.render(answers, remainingTime, currentMiliseconds);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Timer", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Não foi possível gerar o relatório:\n"  + ex.getMessage(), "Temporizador de Provas / Simulados", JOptionPane.ERROR_MESSAGE);
             }
             
             answers.clear();
@@ -796,6 +863,22 @@ public class Timer extends javax.swing.JFrame {
         if (answers.size() == questionNumber) btnNextQuestion.setText("Finalizar Simulado");
     }//GEN-LAST:event_btnNextQuestionActionPerformed
 
+    private void lblLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLinkMouseClicked
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        
+        if (desktop == null || !desktop.isSupported(Desktop.Action.BROWSE)) return;
+        
+        try {
+            desktop.browse(new URI("https://solucaomendesgc.com.br"));
+        } catch (URISyntaxException | IOException ex) {
+            JOptionPane.showMessageDialog(this, "Não foi possível abrir o link:\n" + ex.getMessage(), "Temporizador de Provas / Simulados", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_lblLinkMouseClicked
+
+    private void lblLogoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLogoMouseClicked
+        lblLinkMouseClicked(evt);
+    }//GEN-LAST:event_lblLogoMouseClicked
+
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -823,7 +906,10 @@ public class Timer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -835,9 +921,12 @@ public class Timer extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
     private javax.swing.JLabel lblCurrentTime;
     private javax.swing.JLabel lblEndTime;
     private javax.swing.JLabel lblLatestTime;
+    private javax.swing.JLabel lblLink;
+    private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblMaxTime;
     private javax.swing.JLabel lblOption;
     private javax.swing.JLabel lblPenaltyAndExtraTime;
